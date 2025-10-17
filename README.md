@@ -31,4 +31,4 @@ My goal is to help companies use data and AI not just for analysis, but for inte
 ---
 
 ### 📫 Let’s Connect
-[LinkedIn](https://www.linkedin.com/in/ebrahimtahirr) · [Hugging Face](https://huggingface.co/Ebrahimtahirr) · [GitHub](https://github.com/Ebrahimtahirr)
+[LinkedIn](www.linkedin.com/in/m-ebrahim-tahir-awan-660029231) · [Hugging Face](https://huggingface.co/Ebrahimtahirr) · [GitHub](https://github.com/Ebrahimtahirr)
