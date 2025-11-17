@@ -18,7 +18,7 @@ st.set_page_config(
 # --------------------------------------------------
 @st.cache_data
 def load_data():
-    df = pd.read_csv("JPMC-Risk-Ops-Dashboard/data/incidents_12000.csv")
+    df = pd.read_csv("Risk-Ops-Dashboard/data/incidents_12000.csv")
     df["date"] = pd.to_datetime(df["date"])
     return df
 
@@ -112,42 +112,42 @@ def generate_insights(df):
     insights = []
 
     top_cat = df["category"].value_counts().idxmax()
-    insights.append(f"🔹 **{top_cat}** has the highest incident volume.")
+    insights.append(f"• {top_cat} has the highest number of incidents")
 
     ss_rt = df.groupby("subsystem")["time_to_resolve_hours"].mean().sort_values(ascending=False)
-    insights.append(f"🔹 **{ss_rt.index[0]}** has the longest resolution time (**{ss_rt.iloc[0]:.1f} hours**).")
+    insights.append(f"• {ss_rt.index[0]} has the longest average resolution time at {ss_rt.iloc[0]:.1f} hours")
 
     sla_df = df[df["sla_breached"] == "Yes"]
     if not sla_df.empty:
         rc = sla_df["root_cause"].value_counts(normalize=True).sort_values(ascending=False)
-        insights.append(f"🔹 **{rc.index[0]}** drives ~{rc.iloc[0] * 100:.1f}% of SLA breaches.")
+        insights.append(f"• {rc.index[0]} is responsible for about {rc.iloc[0] * 100:.1f}% of SLA breaches")
 
     fi = df.groupby("category")["financial_impact_usd"].sum().sort_values(ascending=False)
-    insights.append(f"🔹 **{fi.index[0]}** has the highest financial impact (~${fi.iloc[0]:,.0f}).")
+    insights.append(f"• {fi.index[0]} has the highest financial impact at about ${fi.iloc[0]:,.0f}")
 
     return insights
 
 # --------------------------------------------------
 # PAGE TITLE
 # --------------------------------------------------
-st.title("🏦 Banking Operations – Risk & Incident Analytics Dashboard")
+st.title("Banking Operations – Risk and Incident Analytics Dashboard")
 
 st.markdown("""
-Use the filters on the left to slice the data by date, region, severity, subsystem,  
-category, channel, and SLA performance.  
+This dashboard helps track operational incidents across systems, channels, categories, and regions.
+Use the filters on the left to adjust the view.
 """)
 
 # --------------------------------------------------
 # KPI CARDS
 # --------------------------------------------------
-st.subheader("Key KPIs")
+st.subheader("Key Metrics")
 
 c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("Total Incidents", f"{kpis['Total']:,}")
 c2.metric("SLA Breach Rate", f"{kpis['SLA']}%")
 c3.metric("Avg Resolution (hrs)", kpis["ART"])
 c4.metric("Financial Impact", f"${kpis['Impact']:,.0f}")
-c5.metric("Repeat Incident Rate", f"{kpis['Repeat']}%")
+c5.metric("Repeat Rate", f"{kpis['Repeat']}%")
 
 st.markdown("---")
 
@@ -155,7 +155,7 @@ st.markdown("---")
 # TABS
 # --------------------------------------------------
 tab_overview, tab_root, tab_systems, tab_fin = st.tabs(
-    ["📊 Overview", "🧩 Root Cause & SLA", "🖥 Systems, Region & Channel", "💰 Financial Impact"]
+    ["Overview", "Root Cause and SLA", "Systems and Channels", "Financial Impact"]
 )
 
 # --------------------------------------------------
@@ -171,19 +171,16 @@ with tab_overview:
 
         colA, colB = st.columns(2)
 
-        # SAFE CATEGORY DF
         with colA:
             cat = filtered_df["category"].value_counts().reset_index()
             cat.columns = ["category", "count"]
             st.plotly_chart(px.bar(cat, x="category", y="count", title="Incidents by Category"),
                             use_container_width=True)
 
-        # SAFE SEVERITY DF
         with colB:
             sev = filtered_df["severity_level"].value_counts().reset_index()
             sev.columns = ["severity_level", "count"]
-            st.plotly_chart(px.bar(sev, x="severity_level", y="count",
-                                   title="Incidents by Severity Level"),
+            st.plotly_chart(px.bar(sev, x="severity_level", y="count", title="Incidents by Severity"),
                             use_container_width=True)
 
 # --------------------------------------------------
@@ -195,7 +192,6 @@ with tab_root:
     else:
         colA, colB = st.columns(2)
 
-        # SAFE ROOT CAUSE DF
         with colA:
             rc = filtered_df["root_cause"].value_counts().reset_index()
             rc.columns = ["root_cause", "count"]
@@ -210,12 +206,13 @@ with tab_root:
                 .reset_index()
             )
             sla_yes = temp[temp["sla_breached"] == "Yes"]
-            st.plotly_chart(px.bar(sla_yes, x="root_cause", y="prop",
-                                   title="SLA Breach Rate by Root Cause"),
-                            use_container_width=True)
+            st.plotly_chart(
+                px.bar(sla_yes, x="root_cause", y="prop", title="SLA Breach Rate by Root Cause"),
+                use_container_width=True
+            )
 
 # --------------------------------------------------
-# TAB 3: SYSTEM / REGION / CHANNEL
+# TAB 3: SYSTEMS / REGION / CHANNEL
 # --------------------------------------------------
 with tab_systems:
     if filtered_df.empty:
@@ -223,7 +220,6 @@ with tab_systems:
     else:
         colA, colB = st.columns(2)
 
-        # SAFE SUBSYSTEM DF
         ss = filtered_df["subsystem"].value_counts().reset_index()
         ss.columns = ["subsystem", "count"]
         colA.plotly_chart(px.bar(ss, x="subsystem", y="count", title="Incidents by Subsystem"),
@@ -234,7 +230,7 @@ with tab_systems:
             .mean().reset_index().sort_values("time_to_resolve_hours", ascending=False)
         )
         colB.plotly_chart(px.bar(ss_rt, x="subsystem", y="time_to_resolve_hours",
-                                 title="Avg Resolution Time (hrs) by Subsystem"),
+                                 title="Avg Resolution Time by Subsystem"),
                           use_container_width=True)
 
         colC, colD = st.columns(2)
@@ -265,7 +261,7 @@ with tab_fin:
                           use_container_width=True)
 
         fi_ss = filtered_df.groupby("subsystem")["financial_impact_usd"].sum().reset_index()
-        fi_ss = fi_ss.sort_values("financial_impact_usd", ascending=False)
+        fi_ss = fi_ss.sortsort_values("financial_impact_usd", ascending=False)
         colB.plotly_chart(px.bar(fi_ss, x="subsystem", y="financial_impact_usd",
                                  title="Financial Impact by Subsystem"),
                           use_container_width=True)
@@ -279,9 +275,10 @@ with tab_fin:
 # INSIGHTS
 # --------------------------------------------------
 st.markdown("---")
-st.subheader("🔎 Auto-Generated Insights")
+st.subheader("Auto Insights")
 
 for insight in generate_insights(filtered_df):
     st.markdown(insight)
+
 
 
