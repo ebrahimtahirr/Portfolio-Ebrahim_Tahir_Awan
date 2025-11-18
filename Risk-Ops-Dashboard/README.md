@@ -22,9 +22,13 @@ KPIs: total incidents, SLA breach rate, avg resolution time, financial impact, r
 Tabs:
 
 Overview – trends, category and severity breakdown
+
 Root Cause & SLA – what is driving issues and SLA breaches
+
 Systems & Channels – subsystem, region, and channel stability
+
 Financial Impact – impact by category and subsystem, top 10 costly incidents
+
 Auto Insights – simple text summaries for quick takeaways
 
 🧰 Tech Stack:
