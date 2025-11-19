@@ -8,7 +8,6 @@ Welcome to my portfolio of data-driven projects built at the intersection of **a
 | Project | Description | Live Demo |
 |----------|--------------|-----------|
 | 📊 **Customer Churn Prediction Dashboard** | Predicts telecom churn using ML with real-time dashboards and actionable insights. | [View App](https://ebrahimtahirr-customer-churn-dashboard.hf.space) |
-|--------|-------------|-----------|
 | ⚙️ Risk and Incident Analytics Dashboard | Tracks operational incidents, highlights SLA breach patterns, identifies root causes, and quantifies financial impact using interactive visualizations. | [View App](https://portfolio-ebrahimtahirawan-grckguancn6wgnkv2asvvi.streamlit.app/) |
 
 ---
